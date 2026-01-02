@@ -31,3 +31,32 @@ describe('MyPromise 순서 테스트', () => {
     );
   }, 100);
 });
+
+describe('MyPromise 체이닝 테스트', () => {
+  // 테스트 1: 값의 전파
+  new MyPromise((res) => res(10))
+    .then((val) => val * 2)
+    .then((val) => {
+      it(
+        '첫 번째 then의 리턴값이 두 번째 then으로 전달되어야 함 (10 * 2 = 20)',
+        val === 20
+      );
+    });
+
+  // 테스트 2: 비동기 상황에서의 체이닝
+  let asyncResult = '';
+  new MyPromise((res) => {
+    setTimeout(() => res('A'), 100);
+  })
+    .then((val) => val + 'B')
+    .then((val) => {
+      asyncResult = val;
+    });
+
+  setTimeout(() => {
+    it(
+      '비동기 작업 이후에도 체이닝이 정상적으로 작동해야 함 (AB)',
+      asyncResult === 'AB'
+    );
+  }, 200);
+});
